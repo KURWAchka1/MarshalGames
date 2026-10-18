@@ -58,11 +58,18 @@ export const lights = {
   keyboard: 'Стрелки — выбор клетки. Enter или пробел — ход.',
   levels: [{ id: 'easy', label: '3 × 3', size: 3 }, { id: 'normal', label: '4 × 4', size: 4 }, { id: 'hard', label: '5 × 5', size: 5 }],
   defaultLevel: 'normal',
-  create(level, random = Math.random) {
+  create(level, random = Math.random, previous = null) {
     const size = this.levels.find(item => item.id === level).size;
     let board = Array(size * size).fill(0);
     for (let i = 0; i < size * size; i++) if (random() < 0.5) board = toggleLights(board, i, size);
     if (!board.some(Boolean)) board = toggleLights(board, Math.floor(random() * board.length), size);
+    // A new game must not repeat the previous opening, even if the random draw repeats.
+    if (Array.isArray(previous) && previous.length === board.length && board.every((value, i) => value === previous[i])) {
+      for (let i = 0; i < board.length; i++) {
+        const alternative = toggleLights(board, i, size);
+        if (alternative.some(Boolean)) { board = alternative; break; }
+      }
+    }
     return { size, board, initial: [...board], moves: 0, history: [] };
   },
   valid(state, level) {

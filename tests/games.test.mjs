@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { lights, toggleLights, solveLights } from '../public/js/games/lights.js';
 import { pairs } from '../public/js/games/pairs.js';
 import { sliding, adjacentIndices, isSolvable } from '../public/js/games/sliding.js';
-import { loadGame, saveGame } from '../public/js/storage.js';
+import { loadGame, saveGame, hasProgress } from '../public/js/storage.js';
 
 function seeded(seed) {
   return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 2 ** 32; };
@@ -32,6 +32,27 @@ test('lights only toggles direct neighbours and undo restores the field', () => 
 test('lights detects an unsolvable layout and handles zero entropy random sources', () => {
   assert.equal(solveLights([1, ...Array(15).fill(0)], 4), null);
   for (const random of [() => 0, () => 0.99]) assert.equal(lights.won(lights.create('normal', random)), false);
+});
+
+test('a new lights game never repeats the previous opening, even with an identical random draw', () => {
+  for (const level of lights.levels) {
+    const original = lights.create(level.id, () => 0.99);
+    const next = lights.create(level.id, () => 0.99, original.initial);
+    assert.notDeepEqual(next.board, original.board);
+    assert.equal(lights.won(next), false);
+    assert.equal(lights.valid(next, level.id), true);
+  }
+});
+
+test('only started, unfinished games resume; untouched fields get a new opening', () => {
+  for (const game of [lights, pairs, sliding]) {
+    const original = game.create(game.defaultLevel, seeded(52));
+    assert.equal(hasProgress(game, original), false);
+    const index = game.id === 'sliding' ? adjacentIndices(original.board.indexOf(0), original.size)[0] : 0;
+    assert.equal(hasProgress(game, game.move(original, index)), true);
+  }
+  const completed = { size: 3, board: Array(9).fill(0), moves: 12 };
+  assert.equal(hasProgress(lights, completed), false);
 });
 
 test('sliding generator preserves parity for 300 fields at both sizes', () => {

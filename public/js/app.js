@@ -1,7 +1,7 @@
 import { lights } from './games/lights.js';
 import { pairs } from './games/pairs.js';
 import { sliding, adjacentIndices } from './games/sliding.js';
-import { loadGame, saveGame } from './storage.js';
+import { loadGame, saveGame, hasProgress } from './storage.js';
 import { symbol, symbolNames, arrow, controlIcon } from './symbols.js';
 
 const games = [lights, pairs, sliding];
@@ -23,7 +23,7 @@ function preview(id) {
 
 function gameCard(game) {
   const saved = loadGame(game);
-  const continuing = saved && !game.won(saved.state) && (saved.state.moves > 0 || saved.state.open?.length);
+  const continuing = saved && hasProgress(game, saved.state);
   return `<a class="game-card ${game.theme}-card" href="#/play/${game.id}" data-category="${game.category}">
     <div class="card-art" aria-hidden="true">${preview(game.id)}</div>
     <div class="card-copy"><h2>${game.title}</h2><span class="game-tag">${game.tag}</span></div>
@@ -63,7 +63,8 @@ function persist() {
 function renderPlay(game) {
   const saved = loadGame(game);
   const level = saved?.level || game.defaultLevel;
-  current = { game, level, state: saved?.state || game.create(level), hint: null, helpPinned: false };
+  const resume = saved && hasProgress(game, saved.state);
+  current = { game, level, state: resume ? saved.state : game.create(level, Math.random, saved?.state?.initial), hint: null, helpPinned: false };
   document.title = `${game.title} — Marshal Games`;
   main.className = `wrap play-page theme-${game.id}`;
   main.innerHTML = `<a href="#/" class="back-link">← Все игры</a>
@@ -141,7 +142,7 @@ function clearPending() {
 function startNew(level) {
   clearPending();
   current.level = level;
-  current.state = current.game.create(level);
+  current.state = current.game.create(level, Math.random, current.state.initial);
   current.hint = null;
   main.querySelectorAll('[data-level]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.level === level)));
   updateBoard(true);

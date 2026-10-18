@@ -1,5 +1,9 @@
 const PREFIX = 'marshal-games:v1:';
 
+export function hasProgress(game, state) {
+  return !game.won(state) && (state.moves > 0 || (state.open?.length ?? 0) > 0);
+}
+
 export function loadGame(game) {
   try {
     const saved = JSON.parse(localStorage.getItem(PREFIX + game.id));
