@@ -242,8 +242,8 @@ main:focus { outline: none; }
 .pair-back::before { content: ''; position: absolute; inset: 10px; border: 1px solid #b9c4aa66; border-radius: 1px; }
 .pair-back svg { width: 57%; max-height: 76%; }
 .pair-face { background: #fffdf6; border: 1px solid #d8d8c8; transform: rotateY(180deg); padding: 9px 7px 7px; }
-.wildlife-art { display: block; background-image: url('./games/wildlife-atlas.webp'); background-size: 400% 300%; background-position: var(--animal-x) var(--animal-y); background-repeat: no-repeat; aspect-ratio: 1; width: 100%; }
-.pair-face .wildlife-art { width: 100%; max-height: calc(100% - 16px); }
+.wildlife-art { display: block; object-fit: contain; aspect-ratio: 1; width: 100%; height: auto; min-height: 0; }
+.pair-face .wildlife-art { width: 100%; height: calc(100% - 18px); object-fit: contain; flex: 1; }
 .specimen-name { margin-top: 5px; color: #62705c; font-size: clamp(8px,1.2vw,11px); letter-spacing: .03em; }
 .pair-cell.is-open .pair-rotor { transform: rotateY(180deg); }
 .pair-cell.is-matched .pair-face { background: #eaf0e3; border-color: #9cb58e; }

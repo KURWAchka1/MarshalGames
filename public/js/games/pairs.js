@@ -1,3 +1,5 @@
+import {wildlifeArt} from '../wildlife.js';
+
 export function shuffle(values, random = Math.random) {
   const result = [...values];
   for (let i = result.length - 1; i > 0; i--) {
@@ -11,7 +13,7 @@ export const pairs = {
   id: 'pairs', title: 'Найди пару', category: 'memory', tag: 'Память', theme: 'pairs',
   description: 'Иллюстрированный лесной атлас на память.',
   instruction: 'Открывай по две карточки и находи одинаковых животных. Совпавшая пара останется открытой. Постарайся запомнить остальные.',
-  preview:'<div class="specimen-preview"><i></i><span class="wildlife-art" style="--animal-x:0%;--animal-y:0%"></span><span class="wildlife-art" style="--animal-x:66.6667%;--animal-y:0%"></span></div>',
+  preview:`<div class="specimen-preview">${wildlifeArt(0)}${wildlifeArt(2)}</div>`,
   keyboard: 'Стрелки — выбор карточки. Enter или пробел — открыть.',
   levels: [{ id: 'easy', label: '6 пар', count: 6, size: 4 }, { id: 'normal', label: '8 пар', count: 8, size: 4 }, { id: 'hard', label: '10 пар', count: 10, size: 5 }],
   defaultLevel: 'normal',

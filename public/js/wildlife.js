@@ -1,2 +1,3 @@
 export const wildlifeNames=['Лиса','Рысь','Сипуха','Белка','Ворон','Барсук','Заяц','Ёж','Олень','Куница','Волк','Зимородок'];
-export function wildlifeArt(index){return `<span class="wildlife-art" style="--animal-x:${index%4*100/3}%;--animal-y:${Math.floor(index/4)*50}%" aria-hidden="true"></span>`;}
+const wildlifeFiles=['fox','lynx','owl','squirrel','raven','badger','hare','hedgehog','deer','marten','wolf','kingfisher'];
+export function wildlifeArt(index){const src=new URL(`../assets/games/wildlife/${wildlifeFiles[index]}.webp`,import.meta.url);return `<img class="wildlife-art" src="${src}" alt="" draggable="false" aria-hidden="true">`;}
