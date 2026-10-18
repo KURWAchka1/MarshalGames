@@ -42,7 +42,31 @@ main:focus { outline: none; }
 .catalog { padding-top: 25px; }
 .catalog-heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 24px; }
 .catalog-heading h1 { font-size: 27px; font-weight: 600; letter-spacing: -.7px; }
-.filters { display: flex; gap: 22px; }
+.filters { display: flex; gap: 22px; overflow-x: auto; margin-bottom: 20px; scrollbar-width: thin; }
+.catalog-count { font-size: 12px; font-weight: 400; letter-spacing: 0; color: var(--muted); margin-left: 8px; vertical-align: middle; }
+.search-field { display: flex; align-items: center; gap: 10px; width: 250px; border: 1px solid var(--line); border-radius: 6px; padding: 0 12px; background: white; }
+.search-field svg { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
+.search-field input { width: 100%; min-width: 0; height: 40px; border: 0; outline: 0; font: inherit; font-size: 12px; background: transparent; color: var(--ink); }
+.search-field:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.catalog-empty { text-align: center; padding: 50px 15px; color: var(--muted); font-size: 14px; }
+.catalog-empty .button { margin-top: 20px; }
+.play-page.experience-page { width: min(720px, 100%); }
+.experience-host { min-width: 0; }
+.stage-card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: white; }
+.stage-stats { display: flex; justify-content: flex-end; gap: 25px; padding: 15px 20px; min-height: 64px; }
+.stage-stats > span { display: flex; gap: 6px; align-items: baseline; }
+.stage-stats strong { font-size: 20px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.stage-stats small { font-size: 10px; color: var(--muted); }
+.canvas-frame { position: relative; line-height: 0; }
+.canvas-frame canvas { display: block; width: 100%; height: auto; touch-action: none; outline-offset: -4px; }
+.stage-overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; background: #161c2944; line-height: normal; }
+.stage-overlay-panel { min-width: 210px; max-width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 26px 30px; text-align: center; background: #fffffff5; box-shadow: 0 6px 25px #161c2933; }
+.stage-overlay-panel h2 { font-size: 21px; font-weight: 600; }
+.stage-overlay-panel p { font-size: 12px; color: var(--muted); margin-top: 10px; }
+.stage-overlay-panel p:empty { display: none; }
+.stage-overlay-panel .button { margin-top: 19px; min-width: 116px; }
+.stage-controls { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 5px 12px; min-height: 52px; }
+.card-art > svg { width: 90%; height: 90%; }
 .filters button { min-height: 42px; padding: 10px 1px; border: none; border-bottom: 2px solid transparent; background: transparent; font-size: 12px; color: var(--muted); white-space: nowrap; }
 .filters button[aria-pressed=true] { border-bottom-color: var(--accent); color: var(--ink); }
 .filters button:hover { color: var(--accent); }
@@ -172,6 +196,7 @@ main:focus { outline: none; }
   .catalog { padding-top: 19px; min-height: 0; }
   .catalog-heading { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 17px; }
   .catalog-heading h1 { font-size: 25px; }
+  .search-field { width: 100%; }
   .filters { gap: 25px; }
   .filters button { font-size: 12px; }
   .game-card { grid-template-columns: 65px minmax(0, 1fr) 18px; padding: 18px 14px; gap: 13px; }

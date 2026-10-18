@@ -1,16 +1,16 @@
-import { lights } from './games/lights.js';
 import { pairs } from './games/pairs.js';
-import { sliding, adjacentIndices } from './games/sliding.js';
+import { adjacentIndices } from './games/sliding.js';
+import { games } from './registry.js';
 import { loadGame, saveGame, hasProgress } from './storage.js';
 import { symbol, symbolNames, arrow, controlIcon } from './symbols.js';
 
-const games = [lights, pairs, sliding];
 const main = document.querySelector('#main');
 const announcer = document.querySelector('#announcer');
 let current = null;
 let settleTimer;
 let hintTimer;
 let filter = 'all';
+let search = '';
 let navigating = false;
 
 const announce = message => { announcer.textContent = message; };
@@ -22,10 +22,10 @@ function preview(id) {
 }
 
 function gameCard(game) {
-  const saved = loadGame(game);
+  const saved = game.mount ? null : loadGame(game);
   const continuing = saved && hasProgress(game, saved.state);
-  return `<a class="game-card ${game.theme}-card" href="#/play/${game.id}" data-category="${game.category}">
-    <div class="card-art" aria-hidden="true">${preview(game.id)}</div>
+  return `<a class="game-card ${game.theme}-card" href="#/play/${game.id}" data-category="${game.category}" data-title="${game.title.toLocaleLowerCase('ru')} ${game.tag.toLocaleLowerCase('ru')}">
+    <div class="card-art" aria-hidden="true">${game.preview || preview(game.id)}</div>
     <div class="card-copy"><h2>${game.title}</h2><span class="game-tag">${game.tag}</span></div>
     <span class="card-action"><span>${continuing ? 'Продолжить' : 'Играть'}</span> ${arrow}</span>
   </a>`;
@@ -36,10 +36,14 @@ function renderHome() {
   document.title = 'Marshal Games';
   main.className = 'wrap home';
   main.innerHTML = `<section class="catalog" id="games" aria-labelledby="catalog-title">
-    <div class="catalog-heading"><h1 id="catalog-title">Игры</h1>
-    <div class="filters" role="group" aria-label="Категория игр">${[['all', 'Все игры'], ['logic', 'Логика'], ['memory', 'Память']].map(([id, label]) => `<button type="button" data-filter="${id}" aria-pressed="${filter === id}">${label}</button>`).join('')}</div></div>
+    <div class="catalog-heading"><h1 id="catalog-title">Игры <span class="catalog-count" id="catalog-count">${games.length}</span></h1><label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="game-search" type="search" placeholder="Найти игру" aria-label="Поиск игр" autocomplete="off"></label></div>
+    <div class="filters" role="group" aria-label="Категория игр">${[['all', 'Все игры'], ...[...new Map(games.map(game => [game.category, game.tag])).entries()]].map(([id, label]) => `<button type="button" data-filter="${id}" aria-pressed="${filter === id}">${label}</button>`).join('')}</div>
     <div class="game-grid">${games.map(gameCard).join('')}</div>
+    <div class="catalog-empty" id="catalog-empty" hidden><p>Игр не найдено</p><button type="button" class="button button-secondary" id="clear-search">Сбросить поиск</button></div>
   </section>`;
+  main.querySelector('#game-search').value = search;
+  main.querySelector('#game-search').addEventListener('input', event => { search = event.target.value; applyFilter(); });
+  main.querySelector('#clear-search').addEventListener('click', () => { search = ''; filter = 'all'; main.querySelector('#game-search').value = ''; applyFilter(); main.querySelector('#game-search').focus(); });
   applyFilter();
   main.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
     filter = button.dataset.filter;
@@ -49,8 +53,37 @@ function renderHome() {
 }
 
 function applyFilter() {
+  const query = search.trim().toLocaleLowerCase('ru').replaceAll('ё', 'е');
   main.querySelectorAll('[data-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === filter)));
-  main.querySelectorAll('[data-category]').forEach(card => { card.hidden = filter !== 'all' && card.dataset.category !== filter; });
+  let count = 0;
+  main.querySelectorAll('[data-category]').forEach(card => { card.hidden = (filter !== 'all' && card.dataset.category !== filter) || !card.dataset.title.replaceAll('ё', 'е').includes(query); if (!card.hidden) count++; });
+  main.querySelector('#catalog-count').textContent = count;
+  main.querySelector('#catalog-empty').hidden = count > 0;
+  main.querySelector('.game-grid').hidden = count === 0;
+}
+
+function gameHeader(game) {
+  return `<a href="#/" class="back-link">← Все игры</a><div class="play-heading"><h1>${game.title}</h1><div class="play-heading-actions"><button type="button" class="button button-secondary" id="new-game">${game.newLabel || 'Новая игра'}</button><div class="help-control"><button class="icon-button" type="button" id="help-button" aria-label="Как играть" aria-expanded="false" aria-controls="help-popover">${controlIcon('help')}</button><section class="help-popover" id="help-popover" aria-label="Правила игры" hidden><h2>Как играть</h2><p id="game-instruction">${game.instruction}</p><p class="help-keyboard">${game.keyboard}</p><p class="save-note" id="save-note"></p></section></div></div></div>`;
+}
+
+function bindHelp() {
+  const helpControl = main.querySelector('.help-control');
+  helpControl.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') setHelpOpen(true); });
+  helpControl.addEventListener('pointerleave', () => { if (!current.helpPinned && !helpControl.contains(document.activeElement)) setHelpOpen(false); });
+  helpControl.addEventListener('focusin', () => setHelpOpen(true));
+  helpControl.addEventListener('focusout', event => { if (!helpControl.contains(event.relatedTarget)) { current.helpPinned = false; setHelpOpen(false); } });
+  main.querySelector('#help-button').addEventListener('click', () => { current.helpPinned = !current.helpPinned; setHelpOpen(current.helpPinned); });
+}
+
+function renderExperience(game) {
+  document.title = `${game.title} — Marshal Games`;
+  main.className = `wrap play-page experience-page theme-${game.id}`;
+  current = { game, helpPinned: false };
+  main.innerHTML = `${gameHeader(game)}<div id="game-host" class="experience-host"></div>`;
+  main.querySelector('#save-note').hidden = true;
+  current.controller = game.mount(main.querySelector('#game-host'), { announce });
+  main.querySelector('#new-game').addEventListener('click', () => current.controller.restart());
+  bindHelp();
 }
 
 function persist() {
@@ -67,8 +100,7 @@ function renderPlay(game) {
   current = { game, level, state: resume ? saved.state : game.create(level, Math.random, saved?.state?.initial), hint: null, helpPinned: false };
   document.title = `${game.title} — Marshal Games`;
   main.className = `wrap play-page theme-${game.id}`;
-  main.innerHTML = `<a href="#/" class="back-link">← Все игры</a>
-    <div class="play-heading"><h1>${game.title}</h1><div class="play-heading-actions"><button type="button" class="button button-secondary" id="new-game">Новая игра</button><div class="help-control"><button class="icon-button" type="button" id="help-button" aria-label="Как играть" aria-expanded="false" aria-controls="help-popover">${controlIcon('help')}</button><section class="help-popover" id="help-popover" aria-label="Правила игры" hidden><h2>Как играть</h2><p id="game-instruction">${game.instruction}</p><p class="help-keyboard">${game.keyboard}</p><p class="save-note" id="save-note"></p></section></div></div></div>
+  main.innerHTML = `${gameHeader(game)}
     <div class="play-layout"><section class="game-stage" aria-label="Игровое поле">
       <div class="game-toolbar"><div class="levels" role="group" aria-label="Размер поля">${game.levels.map(item => `<button type="button" data-level="${item.id}" aria-pressed="${item.id === level}">${item.label}</button>`).join('')}</div><div class="game-stats"><span><strong id="move-count">0</strong> <span>${game.id === 'pairs' ? 'попыток' : 'ходов'}</span></span><span><strong id="progress-count">0</strong> <span id="progress-label"></span></span></div></div>
       <div class="board-wrap"><div class="board-area"><div class="board board-${game.id}" id="board" role="group" aria-label="${game.title}" aria-describedby="game-instruction"></div>
@@ -108,12 +140,7 @@ function renderPlay(game) {
     if (cell) makeMove(Number(cell.dataset.cell));
   });
   main.querySelector('#board').addEventListener('keydown', onBoardKey);
-  const helpControl = main.querySelector('.help-control');
-  helpControl.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') setHelpOpen(true); });
-  helpControl.addEventListener('pointerleave', () => { if (!current.helpPinned && !helpControl.contains(document.activeElement)) setHelpOpen(false); });
-  helpControl.addEventListener('focusin', () => setHelpOpen(true));
-  helpControl.addEventListener('focusout', event => { if (!helpControl.contains(event.relatedTarget)) { current.helpPinned = false; setHelpOpen(false); } });
-  main.querySelector('#help-button').addEventListener('click', () => { current.helpPinned = !current.helpPinned; setHelpOpen(current.helpPinned); });
+  bindHelp();
   updateBoard(true);
   scheduleSettle();
 }
@@ -258,9 +285,11 @@ function focusCell(index) {
 
 function route() {
   clearPending();
+  current?.controller?.destroy();
   const match = /^#\/play\/([a-z]+)$/.exec(location.hash);
   const game = match && games.find(item => item.id === match[1]);
-  if (game) renderPlay(game);
+  if (game?.mount) renderExperience(game);
+  else if (game) renderPlay(game);
   else renderHome();
   if (navigating) {
     if (location.hash === '#games') main.querySelector('#games')?.scrollIntoView({ behavior: 'instant' });
