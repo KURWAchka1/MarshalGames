@@ -127,6 +127,41 @@ main:focus { outline: none; }
 .duel-history summary::-webkit-details-marker { display: none; }
 .duel-history > div { position: absolute; z-index: 5; right: 14px; bottom: calc(100% + 10px); width: 260px; max-width: calc(100% - 28px); max-height: 240px; overflow-y: auto; background: white; border: 1px solid var(--line); border-radius: 7px; padding: 16px; box-shadow: 0 6px 25px #252b3626; }
 .duel-history p { font-size: 11px; line-height: 1.8; color: var(--muted); }
+.music-stage { overflow: hidden; border: 1px solid #3f4653; border-radius: 10px; background: #343b48; color: #dce0e6; }
+.music-console { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: center; padding: 22px; }
+.instrument-picker { display: flex; flex-direction: column; gap: 7px; color: #aeb8c5; font-size: 10px; }
+.instrument-picker select { min-height: 37px; width: 124px; border: 1px solid #59616e; border-radius: 5px; padding: 7px; background: #343b48; color: #f0f2f5; font: 12px var(--body); }
+.music-readout { display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; padding: 13px 7px; border-radius: 5px; background: #242b37; }
+.music-readout > span { font-size: 21px; font-weight: 500; color: #b7d8c9; white-space: nowrap; }
+.music-readout meter { width: 80px; height: 5px; }
+.music-readout meter::-webkit-meter-bar { background: #424e58; border: none; }
+.music-readout meter::-webkit-meter-optimum-value { background: #a8d0bd; }
+.octave-picker { display: flex; align-items: center; justify-content: flex-end; gap: 11px; }
+.octave-picker button { width: 34px; height: 38px; border: 1px solid #59616e; border-radius: 5px; background: #343b48; color: #f0f2f5; font-size: 19px; }
+.octave-picker > span { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.octave-picker small { font-size: 9px; color: #aeb8c5; }
+.octave-picker strong { font-size: 17px; font-weight: 500; }
+.piano-board { position: relative; margin: 0 18px; height: 236px; touch-action: none; }
+.white-keys { display: grid; grid-template-columns: repeat(8,minmax(0,1fr)); gap: 2px; height: 100%; }
+.piano-key { position: relative; padding: 0; touch-action: none; user-select: none; }
+.piano-key.white { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 11px; padding-bottom: 15px; border: 1px solid #b4b2ab; border-radius: 0 0 5px 5px; background: #faf8f1; color: #645f55; box-shadow: inset 0 -5px 0 #dad7cf; }
+.piano-key.white.is-playing { background: #c8dfd1; box-shadow: inset 0 -1px 0 #97b7a4; transform: translateY(3px); }
+.piano-key .note-name { font-size: 12px; }
+.piano-key small { font-size: 10px; color: #9e998e; }
+.piano-key.black { position: absolute; top: 0; left: calc(var(--position)*12.5% - 4%); width: 8%; height: 60%; z-index: 1; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; border: 1px solid #181e27; border-radius: 0 0 4px 4px; background: #232a35; box-shadow: inset 0 -5px 0 #111823,0 4px 4px #1a213655; }
+.piano-key.black small { color: #a6aebb; }
+.piano-key.black.is-playing { background: #587d71; box-shadow: inset 0 -1px 0 #3a5e52; transform: translateY(2px); }
+.piano-key:focus-visible { outline-color: #d2a870; outline-offset: -4px; z-index: 2; }
+.music-bottom { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 18px; }
+.music-transport { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.music-transport .icon-button { color: #c5ceda; }
+.music-transport .icon-button:hover:not(:disabled) { color: white; background: #454f5f; }
+.music-transport #music-record[aria-pressed=true] { color: #f0a18b; background: #524744; }
+.music-transport > span { font-size: 10px; color: #b6bfca; }
+#record-time { color: #f0ad99; min-width: 28px; }
+.music-volume { display: flex; align-items: center; gap: 9px; }
+.music-volume svg { width: 20px; height: 20px; color: #b6bfca; }
+.music-volume input { width: 100px; accent-color: #b7d8c9; }
 .card-art > svg { width: 90%; height: 90%; }
 .filters button { min-height: 42px; padding: 10px 1px; border: none; border-bottom: 2px solid transparent; background: transparent; font-size: 12px; color: var(--muted); white-space: nowrap; }
 .filters button[aria-pressed=true] { border-bottom-color: var(--accent); color: var(--ink); }
@@ -280,6 +315,15 @@ main:focus { outline: none; }
   .duel-energy small { display: none; }
   .duel-action-buttons { gap: 3px; }
   .duel-actions .button { font-size: 11px; padding-inline: 12px; }
+  .music-console { grid-template-columns: 1fr 1fr; gap: 16px; padding: 17px 14px; }
+  .music-readout { grid-column: 1 / -1; grid-row: 2; flex-direction: row; justify-content: space-between; padding: 13px 17px; }
+  .piano-board { margin-inline: 10px; height: 200px; }
+  .piano-key.black { left: calc(var(--position)*12.5% - 4.625%); width: 9.25%; }
+  .piano-key .note-name { font-size: 10px; }
+  .piano-key small { font-size: 9px; }
+  .music-bottom { padding: 11px 8px; gap: 4px; flex-wrap: wrap; }
+  .music-volume { margin-left: auto; }
+  .music-volume input { width: 82px; }
   .filters { gap: 25px; }
   .filters button { font-size: 12px; }
   .game-card { grid-template-columns: 65px minmax(0, 1fr) 18px; padding: 18px 14px; gap: 13px; }
