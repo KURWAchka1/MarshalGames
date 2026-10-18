@@ -25,7 +25,7 @@ export function createStage(host, options) {
     if (mode !== previousMode) {
       overlay.hidden = mode === 'playing';
       const ended = mode === 'won' || mode === 'lost';
-      overlay.querySelector('h2').textContent = mode === 'paused' ? 'Пауза' : mode === 'ready' ? options.label : options.result().title;
+      overlay.querySelector('h2').textContent = mode === 'paused' ? 'Пауза' : mode === 'ready' ? (options.readyTitle?.() || options.label) : options.result().title;
       overlay.querySelector('p').textContent = ended ? options.result().description : '';
       startButton.textContent = mode === 'paused' ? 'Продолжить' : ended ? 'Ещё раз' : 'Начать';
       pauseButton.setAttribute('aria-label', paused ? 'Продолжить' : 'Пауза');
