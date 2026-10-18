@@ -3,6 +3,7 @@ import { adjacentIndices } from './games/sliding.js';
 import { games } from './registry.js';
 import { loadGame, saveGame, hasProgress } from './storage.js';
 import { symbol, symbolNames, arrow, controlIcon } from './symbols.js';
+import { wildlifeNames,wildlifeArt } from './wildlife.js';
 
 const main = document.querySelector('#main');
 const announcer = document.querySelector('#announcer');
@@ -227,8 +228,8 @@ function updateBoard(rebuild = false) {
       const matched = state.found.includes(values[i]);
       const open = matched || state.open.includes(i);
       cell.className = `cell pair-cell color-${values[i]} ${open ? 'is-open' : ''} ${matched ? 'is-matched' : ''}`;
-      cell.innerHTML = `<span class="pair-back" aria-hidden="true">+</span><span class="pair-face" aria-hidden="true">${symbol(values[i])}</span>`;
-      cell.setAttribute('aria-label', `${rowCol}: ${open ? symbolNames[values[i]] : 'закрытая карточка'}${matched ? ', пара найдена' : ''}`);
+      if(cell.dataset.animal!==String(values[i])){cell.innerHTML = `<span class="pair-rotor"><span class="pair-back" aria-hidden="true"><svg viewBox="0 0 80 100"><path d="M40 81V21M40 42C15 44 14 22 18 15c18 3 24 14 22 27ZM40 57c27 3 28-22 24-28-19 5-27 17-24 28ZM40 71C14 72 14 52 17 46c17 0 25 11 23 25Z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M40 34 23 21m17 28 18-13M40 64 22 52" fill="none" stroke="currentColor" stroke-width=".8"/></svg></span><span class="pair-face" aria-hidden="true">${wildlifeArt(values[i])}<span class="specimen-name">${wildlifeNames[values[i]]}</span><span class="pair-check">✓</span></span></span>`;cell.dataset.animal=String(values[i]);}
+      cell.setAttribute('aria-label', `${rowCol}: ${open ? wildlifeNames[values[i]] : 'закрытая карточка'}${matched ? ', пара найдена' : ''}`);
       cell.setAttribute('aria-pressed', String(open));
       cell.setAttribute('aria-disabled', String(matched || won));
     } else {
@@ -285,6 +286,7 @@ function focusCell(index) {
 
 function route() {
   clearPending();
+  announcer.textContent='';
   current?.controller?.destroy();
   const match = /^#\/play\/([a-z]+)$/.exec(location.hash);
   const game = match && games.find(item => item.id === match[1]);

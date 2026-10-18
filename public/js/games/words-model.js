@@ -34,15 +34,20 @@ function prepare(state, random) {
   state.answer=''; state.message=''; state.status='playing';
 }
 export function createWords(random=Math.random) {
-  const state={items:shuffle(WORDS,random).slice(0,10),index:0,solved:0,hints:0,answer:'',letters:[],message:'',status:'playing'};
+  const state={items:shuffle(WORDS,random),index:0,solved:0,hints:0,answer:'',letters:[],message:'',status:'playing'};
   prepare(state,random); return state;
 }
 export function submitWord(state) {
   if (state.status!=='playing') return false;
   if (normalizeWord(state.answer)!==normalizeWord(state.items[state.index].word)) { state.message='Не подходит. Попробуй ещё.'; return false; }
-  state.solved++; state.message='Верно'; state.status=state.solved===state.items.length?'won':'between'; return true;
+  state.solved++; state.message='Верно'; state.status='between'; return true;
 }
-export function nextWord(state,random=Math.random) { if(state.status!=='between')return;state.index++;prepare(state,random); }
+export function nextWord(state,random=Math.random) {
+  if(state.status!=='between')return;
+  const previous=state.items[state.index].word;state.index++;
+  if(state.index>=state.items.length){state.items=shuffle(WORDS,random);state.index=0;if(state.items[0].word===previous)[state.items[0],state.items[1]]=[state.items[1],state.items[0]];}
+  prepare(state,random);
+}
 export function hintWord(state) {
   if(state.status!=='playing')return;
   const word=state.items[state.index].word; let prefix=0;

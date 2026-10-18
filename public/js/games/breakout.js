@@ -1,14 +1,15 @@
 import { createStage, roundRect } from '../stage.js';
-import { createBreakout, launchBreakout, stepBreakout, BW, BH } from './breakout-model.js';
+import { createBreakout, launchBreakout, stepBreakout } from './breakout-model.js';
 
 const colors = ['#f39e6a', '#e9c975', '#6ec4b4', '#90a7e5', '#b39ad8', '#e4a9b9'];
 export const breakout = {
   id: 'breakout', title: 'Рикошет', category: 'arcade', tag: 'Аркада', theme: 'breakout',
-  instruction: 'Отбивай мяч платформой и разбей все блоки. Пройди три уровня. Если мяч упадёт, потеряешь одну из трёх жизней.',
+  instruction: 'Отбивай мяч платформой и разбивай блоки. На месте очищенного поля появляется новая раскладка, мяч постепенно ускоряется. Играй, пока не потеряешь три мяча. Удар краем платформы меняет направление отскока.',
   keyboard: 'Мышь или касание — движение платформы. Стрелки влево/вправо — с клавиатуры. P или Escape — пауза.',
   preview: '<svg viewBox="0 0 100 80"><rect x="4" y="5" width="92" height="70" rx="7" fill="#182c3f"/><g fill="#f39e6a"><rect x="15" y="16" width="20" height="8" rx="2"/><rect x="40" y="16" width="20" height="8" rx="2"/><rect x="65" y="16" width="20" height="8" rx="2"/></g><g fill="#6ec4b4"><rect x="15" y="28" width="20" height="8" rx="2"/><rect x="40" y="28" width="20" height="8" rx="2"/></g><circle cx="64" cy="49" r="4" fill="white"/><rect x="34" y="63" width="35" height="5" rx="2" fill="#dce8ff"/></svg>',
   mount(host, { announce }) {
-    let state = createBreakout();
+    const mobile=matchMedia('(max-width:600px)').matches,BW=mobile?420:720,BH=mobile?600:540;
+    let state = createBreakout(BW,BH);
     let targetX;
     const trail = [];
     const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
@@ -16,8 +17,8 @@ export const breakout = {
       width: BW, height: BH, label: 'Рикошет', announce,
       status: () => state.status,
       start: () => launchBreakout(state),
-      restart: () => { state = createBreakout(); targetX = undefined; trail.length = 0; },
-      stats: () => [{ value: state.score, label: 'Очки' }, { value: `${state.level + 1}/3`, label: 'Уровень' }, { value: state.lives, label: 'Мячи' }],
+      restart: () => { state = createBreakout(BW,BH); targetX = undefined; trail.length = 0; },
+      stats: () => [{ value: state.score, label: 'Очки' }, { value: state.level, label: 'Очищено' }, { value: state.lives, label: 'Мячи' }],
       result: () => ({ title: state.status === 'won' ? 'Все блоки разбиты' : 'Мячи закончились', description: `Очки: ${state.score}` }),
       pointer(type, point) { if (type === 'down' || type === 'move') targetX = point.x; },
       cancelInput() { targetX = undefined; },

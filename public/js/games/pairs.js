@@ -9,8 +9,9 @@ export function shuffle(values, random = Math.random) {
 
 export const pairs = {
   id: 'pairs', title: 'Найди пару', category: 'memory', tag: 'Память', theme: 'pairs',
-  description: 'Запоминай знаки и находи совпадения.',
-  instruction: 'Открывай по две карточки и находи одинаковые знаки. Совпавшая пара останется открытой. Постарайся запомнить остальные.',
+  description: 'Иллюстрированный лесной атлас на память.',
+  instruction: 'Открывай по две карточки и находи одинаковых животных. Совпавшая пара останется открытой. Постарайся запомнить остальные.',
+  preview:'<div class="specimen-preview"><i></i><span class="wildlife-art" style="--animal-x:0%;--animal-y:0%"></span><span class="wildlife-art" style="--animal-x:66.6667%;--animal-y:0%"></span></div>',
   keyboard: 'Стрелки — выбор карточки. Enter или пробел — открыть.',
   levels: [{ id: 'easy', label: '6 пар', count: 6, size: 4 }, { id: 'normal', label: '8 пар', count: 8, size: 4 }, { id: 'hard', label: '10 пар', count: 10, size: 5 }],
   defaultLevel: 'normal',

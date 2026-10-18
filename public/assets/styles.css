@@ -231,18 +231,27 @@ main:focus { outline: none; }
 .light-dot { width: 15%; height: 15%; border-radius: 50%; background: #718096; }
 .is-on .light-dot { background: #fff5da; }
 .light-cell.is-hint::after { content: ''; position: absolute; inset: 5px; border: 3px dashed white; border-radius: 5px; pointer-events: none; }
-.board-pairs { background: #f6ede7; gap: 10px; padding: 15px; }
-.pair-cell { background: #c37d5d; box-shadow: 0 3px 0 #a4654a; color: #f0c9b5; }
-.pair-back { font-size: 34px; font-weight: 400; }
-.pair-face { display: none; width: 51%; height: 51%; }
-.pair-face svg { width: 100%; height: 100%; fill: currentColor; }
-.pair-cell.is-open { background: #fff9ef; color: #b35d39; box-shadow: 0 3px 0 #d9bfa8; }
-.pair-cell.is-open .pair-back { display: none; }
-.pair-cell.is-open .pair-face { display: block; }
-.pair-cell.is-matched { background: #d9e7d9; color: #476f56; box-shadow: 0 3px 0 #b2c9b3; }
-.pair-cell.color-1.is-open:not(.is-matched), .pair-cell.color-6.is-open:not(.is-matched) { color: #ad7a20; }
-.pair-cell.color-2.is-open:not(.is-matched), .pair-cell.color-5.is-open:not(.is-matched) { color: #557b9e; }
-.pair-cell.color-3.is-open:not(.is-matched), .pair-cell.color-7.is-open:not(.is-matched) { color: #8a65a7; }
+.theme-pairs .game-stage { background: #f4f3ec; border-color: #d6d8ce; }
+.theme-pairs .board-area { width: min(100%,540px); }
+.theme-pairs .board-wrap { padding-block: 24px 16px; }
+.board-pairs { background: transparent; gap: 12px; padding: 0; }
+.pair-cell { background: transparent; perspective: 900px; border-radius: 5px; aspect-ratio: .83; }
+.pair-rotor { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .4s cubic-bezier(.25,.7,.2,1); }
+.pair-back, .pair-face { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; backface-visibility: hidden; border-radius: 5px; box-shadow: 0 2px 4px #283a2c20,0 1px 0 #283a2c20; }
+.pair-back { border: 5px solid #e2e5d9; outline: 1px solid #bcc6b2; outline-offset: -7px; background: repeating-linear-gradient(45deg,#395d48 0 1px,#3c614b 1px 5px); color: #c6cdb1; }
+.pair-back::before { content: ''; position: absolute; inset: 10px; border: 1px solid #b9c4aa66; border-radius: 1px; }
+.pair-back svg { width: 57%; max-height: 76%; }
+.pair-face { background: #fffdf6; border: 1px solid #d8d8c8; transform: rotateY(180deg); padding: 9px 7px 7px; }
+.wildlife-art { display: block; background-image: url('./games/wildlife-atlas.webp'); background-size: 400% 300%; background-position: var(--animal-x) var(--animal-y); background-repeat: no-repeat; aspect-ratio: 1; width: 100%; }
+.pair-face .wildlife-art { width: 100%; max-height: calc(100% - 16px); }
+.specimen-name { margin-top: 5px; color: #62705c; font-size: clamp(8px,1.2vw,11px); letter-spacing: .03em; }
+.pair-cell.is-open .pair-rotor { transform: rotateY(180deg); }
+.pair-cell.is-matched .pair-face { background: #eaf0e3; border-color: #9cb58e; }
+.pair-check { position: absolute; top: 5px; right: 6px; width: 15px; height: 15px; border-radius: 50%; display: none; place-items: center; font-size: 9px; color: #fff; background: #628051; }
+.is-matched .pair-check { display: grid; }
+.specimen-preview { position: relative; width: 100%; height: 100%; background: #e9eee2; overflow: hidden; }
+.specimen-preview .wildlife-art { position: absolute; width: 72px; height: 72px; left: -3px; bottom: -5px; transform: rotate(-12deg); }
+.specimen-preview .wildlife-art:last-child { left: 36px; top: -4px; width: 58px; height: 58px; transform: rotate(12deg); }
 .board-sliding { background: #b6a3df; box-shadow: 0 5px 0 #9680c1; }
 .sliding-cell { background: #f2ebff; color: #705297; box-shadow: 0 3px 0 #c6afe5; font-family: 'Unbounded', var(--body); font-size: clamp(20px, 3vw, 28px); font-weight: 600; }
 .sliding-cell.is-correct { background: #e2dcf3; color: #5b457b; }

@@ -16,9 +16,8 @@ export function attemptTiming(state, random = Math.random) {
   const error = angleDistance(state.angle, state.target);
   if (error <= state.width / 2) {
     state.hits++; state.feedback = 'hit'; state.accuracy = Math.round((1 - error / (state.width / 2)) * 100);
-    if (state.hits === 12) { state.status = 'won'; return 'hit'; }
-    state.speed = 1.65 + state.hits * .145;
-    state.width = Math.max(.38, .88 - state.hits * .04);
+    state.speed = Math.min(4.1,1.65 + state.hits * .075);
+    state.width = Math.max(.42, .88 - state.hits * .015);
     if (state.hits % 2 === 0) state.direction *= -1;
     state.target = normalizeAngle(state.angle + state.direction * (1.05 + random() * 3.2));
     return 'hit';

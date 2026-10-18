@@ -1,18 +1,19 @@
 import { createStage,roundRect } from '../stage.js';
-import { createShooter,stepShooter,SW,SH } from './shooter-model.js';
+import { createShooter,stepShooter } from './shooter-model.js';
 
 export const shooter={
   id:'shooter',title:'Звёздный дозор',category:'action',tag:'Шутер',theme:'shooter',
-  instruction:'Пройди три волны. Корабль стреляет автоматически: веди его к противникам и уклоняйся от выстрелов. Пропущенный вниз противник тоже повреждает корпус. Зелёные капсулы восстанавливают одну единицу прочности. Между волнами восстанавливается одна единица.',
+  instruction:'Продержись как можно дольше. Корабль стреляет автоматически: веди его к противникам и уклоняйся от выстрелов. Пропущенный вниз противник тоже повреждает корпус. Зелёные капсулы восстанавливают корпус. После группы противников начинается следующая, без финальной волны.',
   keyboard:'Стрелки или WASD — движение. Можно управлять мышью или пальцем. P или Escape — пауза.',
   preview:'<svg viewBox="0 0 100 80"><rect x="4" y="5" width="92" height="70" rx="7" fill="#17273d"/><g fill="#f0a58d"><path d="m22 16 7 12 7-12-7 4Z"/><path d="m64 21 7 12 7-12-7 4Z"/></g><path d="m50 44 12 22-12-5-12 5Z" fill="#b8def1"/><path d="M50 38v-9" stroke="#9cd1ed" stroke-width="3"/><g fill="#526e8e"><circle cx="19" cy="47" r="1"/><circle cx="79" cy="56" r="1"/></g></svg>',
   mount(host,{announce}){
-    let state=createShooter(),target;
+    const mobile=matchMedia('(max-width:600px)').matches,SW=mobile?420:720,SH=mobile?620:540;
+    let state=createShooter(SW,SH),target;
     const motion=matchMedia('(prefers-reduced-motion: reduce)');
     return createStage(host,{
-      width:SW,height:SH,label:'Звёздный дозор',readyTitle:()=>`Волна ${state.wave+1} из 3`,announce,
-      status:()=>state.status,start:()=>{state.status='playing';},restart:()=>{state=createShooter();target=undefined;},
-      stats:()=>[{label:'Волна',value:`${state.wave+1}/3`},{label:'Очки',value:state.score},{label:'Корпус',value:state.player.hp}],
+      width:SW,height:SH,label:'Звёздный дозор',announce,
+      status:()=>state.status,start:()=>{state.status='playing';},restart:()=>{state=createShooter(SW,SH);target=undefined;},
+      stats:()=>[{label:'Сбито',value:state.kills},{label:'Очки',value:state.score},{label:'Корпус',value:state.player.hp}],
       result:()=>({title:state.status==='won'?'Сектор защищён':'Корабль потерян',description:`Очки: ${state.score}`}),
       pointer(type,point,event){if(type==='down'||type==='move')target={x:point.x,y:point.y-(event.pointerType==='touch'?45:0)};},cancelInput(){target=undefined;},
       step(dt,keys){const dx=Number(keys.has('ArrowRight')||keys.has('KeyD'))-Number(keys.has('ArrowLeft')||keys.has('KeyA')),dy=Number(keys.has('ArrowDown')||keys.has('KeyS'))-Number(keys.has('ArrowUp')||keys.has('KeyW'));if(dx||dy)target=undefined;const hp=state.player.hp;stepShooter(state,dt,{dx,dy,target});if(state.player.hp<hp)announce(`Корпус: ${state.player.hp} из 3`);if(state.status!=='playing')target=undefined;},
