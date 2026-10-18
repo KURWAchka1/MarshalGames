@@ -15,6 +15,7 @@ export const symbolNames = ['звезда', 'солнце', 'капля', 'лу�
 export const symbol = index => `<svg viewBox="0 0 40 40" fill="currentColor" aria-hidden="true" focusable="false">${paths[index]}</svg>`;
 export const arrow = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const controlPaths = {
+  download: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',
   pause: '<path d="M8 5v14M16 5v14" stroke-width="3"/>',
   play: '<path d="m8 4 12 8-12 8Z"/>',
   help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 0 1 4.9.7c0 1.8-2.5 1.9-2.5 3.8m0 2.5h.01"/>',

@@ -82,6 +82,12 @@ main:focus { outline: none; }
 .word-feedback { min-height: 20px; margin: 22px 0 14px; color: var(--muted); font-size: 12px; }
 .word-form .button { min-width: 130px; }
 .word-action-row { display: flex; gap: 12px; align-items: center; justify-content: center; }
+.sand-tools { display: flex; justify-content: space-between; gap: 12px; padding: 0 15px 13px; }
+.material-picker, .brush-picker { display: flex; align-items: center; gap: 4px; }
+.material-picker button, .brush-picker button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-width: 36px; min-height: 38px; padding: 8px 10px; border: 1px solid transparent; border-radius: 5px; background: transparent; font-size: 10px; }
+.material-picker button[aria-pressed=true], .brush-picker button[aria-pressed=true] { border-color: #d5d8e1; background: #f1f2f6; }
+.material-picker i { width: 12px; height: 12px; border: 1px solid #00000020; border-radius: 50%; }
+.brush-picker i { border-radius: 50%; background: #606979; }
 .card-art > svg { width: 90%; height: 90%; }
 .filters button { min-height: 42px; padding: 10px 1px; border: none; border-bottom: 2px solid transparent; background: transparent; font-size: 12px; color: var(--muted); white-space: nowrap; }
 .filters button[aria-pressed=true] { border-bottom-color: var(--accent); color: var(--ink); }
@@ -222,6 +228,10 @@ main:focus { outline: none; }
   .word-clue { font-size: 16px; }
   .word-form input { font-size: 23px; letter-spacing: 4px; }
   .letter-key, .letter-backspace { width: 39px; height: 42px; }
+  .sand-tools { padding-inline: 8px; gap: 4px; flex-wrap: wrap; }
+  .material-picker { flex: 1; justify-content: space-between; }
+  .material-picker button { padding: 8px 6px; gap: 5px; }
+  .brush-picker { margin-left: auto; }
   .filters { gap: 25px; }
   .filters button { font-size: 12px; }
   .game-card { grid-template-columns: 65px minmax(0, 1fr) 18px; padding: 18px 14px; gap: 13px; }
