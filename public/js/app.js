@@ -2,7 +2,7 @@ import { lights } from './games/lights.js';
 import { pairs } from './games/pairs.js';
 import { sliding, adjacentIndices } from './games/sliding.js';
 import { loadGame, saveGame } from './storage.js';
-import { symbol, symbolNames, arrow } from './symbols.js';
+import { symbol, symbolNames, arrow, controlIcon } from './symbols.js';
 
 const games = [lights, pairs, sliding];
 const main = document.querySelector('#main');
@@ -26,8 +26,8 @@ function gameCard(game) {
   const continuing = saved && !game.won(saved.state) && (saved.state.moves > 0 || saved.state.open?.length);
   return `<a class="game-card ${game.theme}-card" href="#/play/${game.id}" data-category="${game.category}">
     <div class="card-art" aria-hidden="true">${preview(game.id)}</div>
-    <div class="card-copy"><h2>${game.title}</h2><p>${game.description}</p></div>
-    <span class="game-tag">${game.tag}</span><span class="card-action"><span>${continuing ? 'Продолжить' : 'Играть'}</span> ${arrow}</span>
+    <div class="card-copy"><h2>${game.title}</h2><span class="game-tag">${game.tag}</span></div>
+    <span class="card-action"><span>${continuing ? 'Продолжить' : 'Играть'}</span> ${arrow}</span>
   </a>`;
 }
 
@@ -63,17 +63,17 @@ function persist() {
 function renderPlay(game) {
   const saved = loadGame(game);
   const level = saved?.level || game.defaultLevel;
-  current = { game, level, state: saved?.state || game.create(level), hint: null };
+  current = { game, level, state: saved?.state || game.create(level), hint: null, helpPinned: false };
   document.title = `${game.title} — Marshal Games`;
   main.className = `wrap play-page theme-${game.id}`;
   main.innerHTML = `<a href="#/" class="back-link">← Все игры</a>
-    <div class="play-heading"><div><p class="eyebrow">${game.tag}</p><h1>${game.title}</h1></div><button type="button" class="button button-secondary" id="new-game">Новая игра <span aria-hidden="true">↻</span></button></div>
+    <div class="play-heading"><h1>${game.title}</h1><div class="play-heading-actions"><button type="button" class="button button-secondary" id="new-game">Новая игра</button><div class="help-control"><button class="icon-button" type="button" id="help-button" aria-label="Как играть" aria-expanded="false" aria-controls="help-popover">${controlIcon('help')}</button><section class="help-popover" id="help-popover" aria-label="Правила игры" hidden><h2>Как играть</h2><p id="game-instruction">${game.instruction}</p><p class="help-keyboard">${game.keyboard}</p><p class="save-note" id="save-note"></p></section></div></div></div>
     <div class="play-layout"><section class="game-stage" aria-label="Игровое поле">
       <div class="game-toolbar"><div class="levels" role="group" aria-label="Размер поля">${game.levels.map(item => `<button type="button" data-level="${item.id}" aria-pressed="${item.id === level}">${item.label}</button>`).join('')}</div><div class="game-stats"><span><strong id="move-count">0</strong> <span>${game.id === 'pairs' ? 'попыток' : 'ходов'}</span></span><span><strong id="progress-count">0</strong> <span id="progress-label"></span></span></div></div>
       <div class="board-wrap"><div class="board-area"><div class="board board-${game.id}" id="board" role="group" aria-label="${game.title}" aria-describedby="game-instruction"></div>
       <section class="game-result" id="game-result" aria-labelledby="result-title" hidden><div class="result-panel"><h2 id="result-title">${game.victory}</h2><p id="result-description"></p><button class="button button-primary" id="play-again" type="button">Новая игра ${arrow}</button></div></section></div></div>
-      <div class="board-actions"><button class="text-button" id="restart-game" type="button">↻ Сначала</button>${game.undo ? '<button class="text-button" id="undo-move" type="button">↶ Отменить ход</button>' : ''}${game.hint ? '<button class="text-button" id="hint" type="button">✧ Подсказка</button>' : ''}</div>
-    </section><aside class="game-aside"><span class="aside-symbol" aria-hidden="true">${symbol(game.id === 'lights' ? 1 : game.id === 'pairs' ? 0 : 8)}</span><h2>Как играть</h2><p id="game-instruction">${game.instruction}</p><div class="keyboard-tip"><span aria-hidden="true">⌨</span><p>${game.keyboard}</p></div><p class="save-note" id="save-note"></p><a href="#/" class="aside-link">Попробовать другую игру ${arrow}</a></aside></div>
+      <div class="board-actions"><button class="icon-button" id="restart-game" type="button" title="Начать заново" aria-label="Начать заново">${controlIcon('restart')}</button>${game.undo ? `<button class="icon-button" id="undo-move" type="button" title="Отменить ход" aria-label="Отменить ход">${controlIcon('undo')}</button>` : ''}${game.hint ? `<button class="icon-button" id="hint" type="button" title="Подсказка" aria-label="Подсказка">${controlIcon('hint')}</button>` : ''}</div>
+    </section></div>
     <dialog id="confirm-dialog" class="confirm-dialog" aria-labelledby="confirm-title"><form method="dialog"><span class="dialog-symbol" aria-hidden="true">↻</span><h2 id="confirm-title">Начать заново?</h2><p id="confirm-description"></p><div class="dialog-actions"><button class="button button-secondary" value="cancel">Продолжить игру</button><button class="button button-primary" id="confirm-action" value="confirm">Начать</button></div></form></dialog>`;
 
   main.querySelector('#new-game').addEventListener('click', () => confirmChange('Текущее поле будет заменено новым.', () => startNew(current.level)));
@@ -107,8 +107,21 @@ function renderPlay(game) {
     if (cell) makeMove(Number(cell.dataset.cell));
   });
   main.querySelector('#board').addEventListener('keydown', onBoardKey);
+  const helpControl = main.querySelector('.help-control');
+  helpControl.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') setHelpOpen(true); });
+  helpControl.addEventListener('pointerleave', () => { if (!current.helpPinned && !helpControl.contains(document.activeElement)) setHelpOpen(false); });
+  helpControl.addEventListener('focusin', () => setHelpOpen(true));
+  helpControl.addEventListener('focusout', event => { if (!helpControl.contains(event.relatedTarget)) { current.helpPinned = false; setHelpOpen(false); } });
+  main.querySelector('#help-button').addEventListener('click', () => { current.helpPinned = !current.helpPinned; setHelpOpen(current.helpPinned); });
   updateBoard(true);
   scheduleSettle();
+}
+
+function setHelpOpen(open) {
+  const popover = main.querySelector('#help-popover');
+  if (!popover) return;
+  popover.hidden = !open;
+  main.querySelector('#help-button').setAttribute('aria-expanded', String(open));
 }
 
 function confirmChange(description, action) {
@@ -260,4 +273,15 @@ document.querySelector('#random-game').addEventListener('click', () => {
   location.hash = `/play/${choices[Math.floor(Math.random() * choices.length)].id}`;
 });
 window.addEventListener('hashchange', route);
+document.addEventListener('pointerdown', event => {
+  const help = main.querySelector('.help-control');
+  if (help && !help.contains(event.target)) { current.helpPinned = false; setHelpOpen(false); }
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && main.querySelector('#help-popover:not([hidden])')) {
+    current.helpPinned = false;
+    main.querySelector('#help-button').focus();
+    setHelpOpen(false);
+  }
+});
 route();

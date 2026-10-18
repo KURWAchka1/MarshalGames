@@ -14,3 +14,10 @@ const paths = [
 export const symbolNames = ['звезда', 'солнце', 'капля', 'луна', 'молния', 'кольцо', 'волны', 'цветок', 'треугольник', 'сердце'];
 export const symbol = index => `<svg viewBox="0 0 40 40" fill="currentColor" aria-hidden="true" focusable="false">${paths[index]}</svg>`;
 export const arrow = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const controlPaths = {
+  help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 0 1 4.9.7c0 1.8-2.5 1.9-2.5 3.8m0 2.5h.01"/>',
+  restart: '<path d="M3 11a9 9 0 1 1 2.8 7M3 4v7h7"/>',
+  undo: '<path d="m8 5-5 5 5 5M3 10h11a6 6 0 0 1 0 12" transform="translate(0 -2)"/>',
+  hint: '<path d="M9 18h6m-5 3h4M8 14a6 6 0 1 1 8 0c-1 1-1 2-1 2H9s0-1-1-2Z"/>',
+};
+export const controlIcon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${controlPaths[name]}</svg>`;
