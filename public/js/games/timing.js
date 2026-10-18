@@ -12,7 +12,7 @@ export const timing = {
     return createStage(host, {
       label: 'Точный момент', announce,
       status: () => state.status, start: () => { state.status = 'playing'; }, restart: () => { state = createTiming(); },
-      stats: () => [{ value: `${state.hits}/12`, label: 'попадания' }, { value: `${state.misses}/3`, label: 'промахи' }],
+      stats: () => [{ value: `${state.hits}/12`, label: 'Попадания' }, { value: `${state.misses}/3`, label: 'Промахи' }],
       result: () => ({ title: state.status === 'won' ? 'Серия завершена' : 'Три промаха', description: `Попаданий: ${state.hits} из 12` }),
       pointer(type) { if (type === 'down') attempt(); },
       key(key) { if (key === ' ' || key === 'Enter') attempt(); },

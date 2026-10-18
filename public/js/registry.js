@@ -3,5 +3,6 @@ import { pairs } from './games/pairs.js';
 import { sliding } from './games/sliding.js';
 import { breakout } from './games/breakout.js';
 import { timing } from './games/timing.js';
+import { runner } from './games/runner.js';
 
-export const games = [lights, pairs, sliding, breakout, timing];
+export const games = [lights, pairs, sliding, breakout, timing, runner];

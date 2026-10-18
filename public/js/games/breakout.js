@@ -17,7 +17,7 @@ export const breakout = {
       status: () => state.status,
       start: () => launchBreakout(state),
       restart: () => { state = createBreakout(); targetX = undefined; trail.length = 0; },
-      stats: () => [{ value: state.score, label: 'очки' }, { value: `${state.level + 1}/3`, label: 'уровень' }, { value: state.lives, label: 'жизни' }],
+      stats: () => [{ value: state.score, label: 'Очки' }, { value: `${state.level + 1}/3`, label: 'Уровень' }, { value: state.lives, label: 'Мячи' }],
       result: () => ({ title: state.status === 'won' ? 'Все блоки разбиты' : 'Мячи закончились', description: `Очки: ${state.score}` }),
       pointer(type, point) { if (type === 'down' || type === 'move') targetX = point.x; },
       cancelInput() { targetX = undefined; },

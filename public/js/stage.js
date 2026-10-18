@@ -36,7 +36,7 @@ export function createStage(host, options) {
     }
     const stats = options.stats();
     const key = JSON.stringify(stats);
-    if (key !== statsKey) { host.querySelector('.stage-stats').innerHTML = stats.map(stat => `<span><strong>${stat.value}</strong><small>${stat.label}</small></span>`).join(''); statsKey = key; }
+    if (key !== statsKey) { host.querySelector('.stage-stats').innerHTML = stats.map(stat => `<span><small>${stat.label}</small><strong>${stat.value}</strong></span>`).join(''); statsKey = key; }
   }
   function activate() {
     if (paused) paused = false;
