@@ -1,0 +1,5 @@
+dist/
+node_modules/
+.codebase-memory/
+*.log
+.DS_Store

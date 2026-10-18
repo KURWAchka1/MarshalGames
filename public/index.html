@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f6f8">
+    <meta name="description" content="Браузерные головоломки: Погаси свет, Найди пару и Пятнашки. Без регистрации и рейтингов.">
+    <meta property="og:title" content="Marshal Games">
+    <meta property="og:description" content="Логические игры и игры на память прямо в браузере.">
+    <meta property="og:type" content="website">
+    <title>Marshal Games</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+    <link rel="stylesheet" href="./assets/styles.css">
+    <script type="module" src="./js/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">К играм</a>
+    <header class="site-header wrap">
+      <a class="brand" href="#/" aria-label="Marshal Games — на главную">
+        <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="brand-word">marshal<span>games</span></span>
+      </a>
+      <nav aria-label="Основная навигация">
+        <button class="random-button" id="random-game" type="button">Случайная игра</button>
+      </nav>
+    </header>
+    <main id="main" class="wrap" tabindex="-1"></main>
+    <footer class="site-footer wrap">
+      <span>Marshal Games</span>
+      <a href="https://github.com/KURWAchka1/MarshalGames" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </footer>
+    <div class="sr-only" role="status" aria-live="polite" id="announcer"></div>
+    <noscript><p class="noscript">Чтобы играть, включи JavaScript в настройках браузера.</p></noscript>
+  </body>
+</html>
