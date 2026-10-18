@@ -19,3 +19,4 @@ test('every golf course has a traversable route for the ball around its walls',(
     assert.ok(found,'blocked golf course');
   }
 });
+test('the final golf hole produces a terminal win and rejects further shots',()=>{const s=createGolf();s.course=4;s.status='playing';s.ball={...COURSES[4].hole,vx:0,vy:0,radius:9};stepGolf(s,1/120);stepGolf(s,.7);assert.equal(s.status,'won');assert.equal(shootGolf(s),false);});

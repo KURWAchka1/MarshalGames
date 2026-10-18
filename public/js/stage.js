@@ -52,12 +52,12 @@ export function createStage(host, options) {
   window.addEventListener('blur', pause, { signal });
   canvas.addEventListener('keydown', event => {
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Enter', 'Escape', 'p', 'P'].includes(event.key)) event.preventDefault();
-    if (event.key === 'Escape' || event.key.toLowerCase() === 'p') { if (!event.repeat) togglePause(); return; }
+    if (event.key === 'Escape' || event.key.toLowerCase() === 'p' || event.code === 'KeyP') { if (!event.repeat) togglePause(); return; }
     if ((paused || options.status() === 'ready') && [' ', 'Enter'].includes(event.key)) { if (!event.repeat) activate(); return; }
     if (paused) return;
-    keys.add(event.key); if (!event.repeat) options.key?.(event.key);
+    keys.add(event.key); keys.add(event.code); if (!event.repeat) options.key?.(event.key,event.code);
   }, { signal });
-  window.addEventListener('keyup', event => keys.delete(event.key), { signal });
+  window.addEventListener('keyup', event => { keys.delete(event.key); keys.delete(event.code); }, { signal });
   function point(event) { const b = canvas.getBoundingClientRect(); return { x: (event.clientX - b.left) * width / b.width, y: (event.clientY - b.top) * height / b.height }; }
   canvas.addEventListener('pointerdown', event => { event.preventDefault(); if (paused || options.status() !== 'playing') return; canvas.focus({ preventScroll: true }); canvas.setPointerCapture(event.pointerId); options.pointer?.('down', point(event), event); }, { signal });
   canvas.addEventListener('pointermove', event => { if (!paused && options.status() === 'playing') options.pointer?.('move', point(event), event); }, { signal });

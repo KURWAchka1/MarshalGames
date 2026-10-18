@@ -22,7 +22,7 @@ export const breakout = {
       pointer(type, point) { if (type === 'down' || type === 'move') targetX = point.x; },
       cancelInput() { targetX = undefined; },
       step(dt, keys) {
-        const direction = Number(keys.has('ArrowRight') || keys.has('d')) - Number(keys.has('ArrowLeft') || keys.has('a'));
+        const direction = Number(keys.has('ArrowRight') || keys.has('KeyD')) - Number(keys.has('ArrowLeft') || keys.has('KeyA'));
         if (direction) targetX = undefined;
         stepBreakout(state, dt, { direction, targetX });
         trail.push({ x: state.ball.x, y: state.ball.y }); if (trail.length > 12) trail.shift();

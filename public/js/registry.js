@@ -8,5 +8,6 @@ import { words } from './games/words.js';
 import { sand } from './games/sand.js';
 import { duel } from './games/duel.js';
 import { golf } from './games/golf.js';
+import { shooter } from './games/shooter.js';
 
-export const games = [lights, pairs, sliding, breakout, timing, runner, words, sand, duel, golf];
+export const games = [lights, pairs, sliding, breakout, timing, runner, words, sand, duel, golf, shooter];

@@ -14,7 +14,7 @@ export const runner = {
       stats: () => [{ value: `${Math.floor(state.distance)} м`, label: 'Дистанция' }, { value: Math.max(0, 2 - state.player.jumps), label: 'Прыжки' }],
       result: () => ({ title: 'Столкновение', description: `Дистанция: ${Math.floor(state.distance)} м` }),
       pointer(type) { if (type === 'down') jumpRunner(state); },
-      key(key) { if ([' ', 'Enter', 'ArrowUp', 'w', 'W'].includes(key)) jumpRunner(state); },
+      key(key,code) { if ([' ', 'Enter', 'ArrowUp'].includes(key)||code==='KeyW') jumpRunner(state); },
       step: dt => stepRunner(state, dt),
       draw(ctx, time) {
         ctx.fillStyle = '#e1ebe5'; ctx.fillRect(0, 0, RW, RH);
